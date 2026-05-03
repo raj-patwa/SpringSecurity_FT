@@ -17,12 +17,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    AuthTokenFilter authTokenFilter;
 
     @Autowired
     DataSource DataSource;
@@ -37,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/signin").permitAll()
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }
